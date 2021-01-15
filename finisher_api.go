@@ -351,6 +351,20 @@ func (db *DB) Delete(value interface{}, conds ...interface{}) (tx *DB) {
 	return
 }
 
+// Delete delete value match given conditions, if the value has primary key, then will including the primary key as condition
+func (db *DB) DeleteNoPk(value interface{}, conds ...interface{}) (tx *DB) {
+	tx = db.getInstance()
+	if len(conds) > 0 {
+		tx.Statement.AddClause(clause.Where{Exprs: tx.Statement.BuildCondition(conds[0], conds[1:]...)})
+	}
+	tx.Statement.Dest = value
+	old := tx.Statement.NoPk
+	tx.Statement.NoPk = true
+	tx.callbacks.Delete().Execute(tx)
+	tx.Statement.NoPk = old
+	return
+}
+
 func (db *DB) Count(count *int64) (tx *DB) {
 	tx = db.getInstance()
 	if tx.Statement.Model == nil {

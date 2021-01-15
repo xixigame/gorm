@@ -43,6 +43,7 @@ type Statement struct {
 	CurDestIndex         int
 	attrs                []interface{}
 	assigns              []interface{}
+	NoPk                 bool
 }
 
 type join struct {
